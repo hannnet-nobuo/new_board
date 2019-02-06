@@ -1,0 +1,27 @@
+險ｭ險域嶌
+
+讒矩
+user
+	name
+	email
+	pass
+
+
+http://flask.pocoo.org/docs/1.0/quickstart/#a-minimal-application
+http://flask.pocoo.org/docs/1.0/installation/
+https://qiita.com/ognek/items/a37dd1cd0e26e6adecaa
+
+謗ｲ遉ｺ譚ｿ縲∝・谺蟶ｭ謚慕ｨｿ縺ｧ縺阪ｋ
+
+
+繧､繝ｳ繧ｹ繝医・繝ｫ縺吶ｋ
+pip install Flask-Session
+pip install redis
+
+繧ｻ繝・す繝ｧ繝ｳ邂｡逅・・縺溘ａ
+redis
+https://github.com/MicrosoftArchive/redis/releases
+
+
+繝昴・繝・Windows power shell縺ｮ蝣ｴ蜷・$env:FLASK_APP = "application.py"
+$env:FLASK_RUN_PORT = 5001

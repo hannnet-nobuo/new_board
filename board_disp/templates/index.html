@@ -1,0 +1,18 @@
+<!doctype html>
+<title>掲示板【{{ title }}、E/title>
+
+<h1>{{ title }}</h1>
+<div>
+  <p>{{ msg|safe }}</p>
+  {% if is_absence %}
+    <table>
+    {% for absence in absences %}
+      <tr>
+        <td>{{ absence.name }}</td>
+        <td><input type="checkbox" name="{{ absence.user_id }}" value="attend" {{ absence.attend }} ></td>
+      </tr>  
+    {% endfor %}
+    </table>
+  {% endif %}
+
+</div>

@@ -1,0 +1,11 @@
+<!doctype html>
+<title>login</title>
+{% if error %}
+  <a>{{ error }}!</a>
+{% endif %}
+
+<form method="post">
+  <p><input type=text name=email></p>
+  <p><input type=password name=pass></p>
+  <p><input type=submit value=Login></p>
+</form>

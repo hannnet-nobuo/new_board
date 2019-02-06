@@ -1,0 +1,13 @@
+<!doctype html>
+<title>メインメニュー</title>
+{% if username %}
+  <a>ようこそ{{ username }}さん、E/a>
+{% endif %}
+
+<h1>メインメニュー</h1>
+<div>
+  <ul>
+    <li><a href="http://127.0.0.1:5001/index">お知らせ登録</a></li>
+    <li><a href="/logout">ログアウチE/a></li>
+  </ul>
+</div>

@@ -1,0 +1,14 @@
+<!doctype html>
+<title>掲示板メインメニュー</title>
+{% if username %}
+  <a>ようこそ{{ username }}さん、E/a>
+{% endif %}
+
+<h1>掲示板メインメニュー</h1>
+<div>
+  <ul>
+    <li><a href="/new">新規登録</a></li>
+    <li><a href="/list">一覧</a></li>
+    <li><a href="{{ url }}">メインメニューに戻めE/a></li>
+  </ul>
+</div>
