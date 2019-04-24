@@ -1,27 +1,28 @@
 設計書
 
 構造
-user
-	name
-	email
-	pass
+absence
+	user_id
+	board_id
+	join
 
 
 http://flask.pocoo.org/docs/1.0/quickstart/#a-minimal-application
 http://flask.pocoo.org/docs/1.0/installation/
 https://qiita.com/ognek/items/a37dd1cd0e26e6adecaa
 
-掲示板、�E欠席投稿できる
+掲示板、出欠席投稿できる
 
 
-インスト�Eルする
+インストールする
 pip install Flask-Session
 pip install redis
 
-セチE��ョン管琁E�Eため
+セッション管理のため
 redis
 https://github.com/MicrosoftArchive/redis/releases
 
 
-ポ�EチEWindows power shellの場吁E$env:FLASK_APP = "application.py"
-$env:FLASK_RUN_PORT = 5001
+windows power shell の場合
+$env:FLASK_APP = "application.py"
+$env:FLASK_RUN_PORT = 5002

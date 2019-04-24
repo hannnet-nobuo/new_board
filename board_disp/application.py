@@ -31,117 +31,54 @@ def defalut():
 def index(_id):
     if(not_login()):
         return redirect_no_login()
-    content = client.board.content.find_one({"_id":ObjectId(_id)})
+    try:
+        content = client.board.content.find_one({"_id":ObjectId(_id)})
+    except:
+        return "エラーです"
     if(content == None):
         return "掲示板が存在しません"
     users = client.board.user.find()
-    absences = client.board.absence.find_one({"content_id":ObjectId(_id)})
     disp_absences = []
     for user in users:
-        one_absence = [x for x in absences if x['user_id'] == ObjectId(user['_id'])][0]
         temp_absence = {}
         temp_absence['user_id'] = user['_id']
         temp_absence['name'] = user['name']
-        temp_absence['attend'] = ''
-        if(one_absence != None and one_absence['attend'] == True):
-            temp_absence['attend'] = 'checkted'
+        absence = client.board.absence.find_one({"user_id":user['_id'], "content_id":content['_id']})
+        if (absence != None and absence['join'] == True):
+            temp_absence['join'] = ' checked '
+        disp_absences.append(temp_absence)
 
     return render_template('index.html',
                                     username=session.get('username'), 
                                     msg=content['msg'].replace('\n', '<br>').replace('\r', ''),
-                                    absences=disp_absences)
+                                    title=content['title'],
+                                    content_id=content['_id'],
+                                    absences=disp_absences
+                                    )
 
-@app.route('/new', methods=['GET','POST'])
-def new():
-    if(not_login()):
-        return redirect_no_login()
-    error = None
-    content = {}
-    if request.method == 'POST':
-        post_absence = False
-        if('absence' in request.form):
-            post_absence = True
-        try:
-            post_title = request.form['title']
-            post_msg = request.form['msg']
-            content = {"title":post_title,"msg":post_msg,"absence":post_absence}
-            if(post_title == '' or post_msg == ''):
-                error = 'タイトルか内容が空です'
-            else:
-                client.board.content.insert_one(content)
-        except:
-            error = '予期せぬエラーが起きました'
-        if(error == None):
-            return redirect(url_for('list'))
-        if(content['absence'] == True):
-            content['absence'] = 'checked'
-    return render_template('new.html', username=session.get('username'), error=error, content=content)
-
-@app.route('/list')
-def list():
-    if(not_login()):
-        return redirect_no_login()
-    contents = []
-    tmp = {}
-    for content in client.board.content.find():
-        tmp = {}
-        tmp['msg'] = content['msg'].replace('\n', '<br>').replace('\r', '')
-        tmp['title'] = content['title']
-        if (content['absence'] == True):
-            tmp['absence'] = 'あり'
-        else:
-            tmp['absence'] = 'なし'
-        tmp['_id'] = content['_id']
-        contents.append(tmp)
-    return render_template('list.html', username=session.get('username'), contents=contents)
-
-@app.route('/edit/<_id>', methods=['GET','POST'])
-def edit(_id):
-    if(not_login()):
-        return redirect_no_login()
-    error = None
-    content = {}
-    if request.method == 'POST':
-        post_absence = False
-        if('absence' in request.form):
-            post_absence = True
-        try:
-            post_title = request.form['title']
-            post_msg = request.form['msg']
-            content = {"title":post_title,"msg":post_msg,"absence":post_absence}
-            if(post_title == '' or post_msg == ''):
-                error = 'タイトルかメチE��ージがからです、E
-            else:
-                client.board.content.find_one_and_update({"_id":ObjectId(_id)},{'$set': content})
-        except:
-            error = 'タイトルかメチE��ージを�E力してください、E
-        if(error == None):
-            return redirect(url_for('list'))
-    else:
-        content = client.board.content.find_one({"_id":ObjectId(_id)})
+@app.route('/update/', methods=['POST'])
+def update():
+    json = request.get_json()
+    if json['user_id'] == None or json['content_id'] == None:
+        return 'エラーです'
+    try:
+        user_id = ObjectId(json['user_id'])
+        content_id = ObjectId(json['content_id'])
+        user = client.board.user.find_one({"_id":user_id})
+        if(user == None):
+            return 'ユーザが存在しません'
+        content = client.board.content.find_one({"_id":content_id})
         if(content == None):
-            return redirect(url_for('list'))
-    if(content['absence'] == True):
-        content['absence'] = 'checked'
-    return render_template('edit.html', username=session.get('username'), error=error, content=content)
+            return 'コンテンツが存在しません'
 
-@app.route('/delete/<_id>', methods=['GET','POST'])
-def delete(_id):
-    if(not_login()):
-        return redirect_no_login()
-    error = None
-    if request.method == 'POST':
-        try:
-            post_id = request.form['_id']
-            client.board.content.delete_one({"_id":ObjectId(post_id)})
-        except:
-            error = '削除に失敗しました、E
-        if(error == None):
-            return redirect(url_for('list'))
-    content = client.board.content.find_one({"_id":ObjectId(_id)})
-    if(content == None):
-        return redirect(url_for('list'))
-    if(content['absence'] == True):
-        content['absence'] = 'checked'
-    return render_template('delete.html', username=session.get('username'), error=error, content=content)
-
+        one_absence = client.board.absence.find_one({"user_id":user_id, "content_id":content_id})
+        if one_absence != None:
+            up_absence = {"join":json['join']}
+            client.board.absence.find_one_and_update({"_id":one_absence['_id']},{'$set': up_absence})
+        else:
+            json['user_id'] = ObjectId(json['user_id'])
+            json['content_id'] = ObjectId(json['content_id'])
+            client.board.absence.insert_one(json)
+    except:
+        return "エラーです"
+    return 'ok'

@@ -1,18 +1,21 @@
 <!doctype html>
-<title>掲示板【{{ title }}、E/title>
+<title>掲示板【{{ title }}】</title>
+<link rel="stylesheet" href="/static/css/board.css">
+<script src="/static/js/jquery-3.4.0.min.js"></script>
+<script src="/static/js/board.js"></script>
 
 <h1>{{ title }}</h1>
 <div>
+  <div id="msg"></div>
+  <input type="hidden" name="content_id" id="content_id" value="{{ content_id }}" />
   <p>{{ msg|safe }}</p>
-  {% if is_absence %}
-    <table>
-    {% for absence in absences %}
-      <tr>
-        <td>{{ absence.name }}</td>
-        <td><input type="checkbox" name="{{ absence.user_id }}" value="attend" {{ absence.attend }} ></td>
-      </tr>  
-    {% endfor %}
-    </table>
-  {% endif %}
+  <table>
+  {% for absence in absences %}
+    <tr>
+      <td>{{ absence.name }}</td>
+      <td><input type="checkbox" name="join" value="{{ absence.user_id }}" {{ absence.join }} ></td>
+    </tr>  
+  {% endfor %}
+  </table>
 
 </div>

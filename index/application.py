@@ -41,7 +41,7 @@ def login():
             session['username'] = user['name']
             return redirect(url_for('index'))
         else:
-            error = 'メールアドレスかパスワードが違いまぁE
+            error = 'メールアドレスかパスワードが違います'
     return render_template('login.html', error=error)
 
 @app.route('/hello/')

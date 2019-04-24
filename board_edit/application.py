@@ -49,11 +49,11 @@ def new():
             post_msg = request.form['msg']
             content = {"title":post_title,"msg":post_msg,"absence":post_absence}
             if(post_title == '' or post_msg == ''):
-                error = '繧ｿ繧､繝医Ν縺九Γ繝・そ繝ｼ繧ｸ縺後°繧峨〒縺吶・
+                error = 'タイトルかメッセージを入力してください。'
             else:
                 client.board.content.insert_one(content)
         except:
-            error = '莠域悄縺帙〓繧ｨ繝ｩ繝ｼ縺瑚ｵｷ縺阪∪縺励◆縲・
+            error = '予期せぬエラーです。'
         if(error == None):
             return redirect(url_for('list'))
         if(content['absence'] == True):
@@ -71,9 +71,9 @@ def list():
         tmp['msg'] = content['msg'].replace('\n', '<br>').replace('\r', '')
         tmp['title'] = content['title']
         if (content['absence'] == True):
-            tmp['absence'] = '縺ゅｊ'
+            tmp['absence'] = 'あり'
         else:
-            tmp['absence'] = '縺ｪ縺・
+            tmp['absence'] = 'なし'
         tmp['_id'] = content['_id']
         contents.append(tmp)
     return render_template('list.html', username=session.get('username'), contents=contents)
@@ -93,11 +93,11 @@ def edit(_id):
             post_msg = request.form['msg']
             content = {"title":post_title,"msg":post_msg,"absence":post_absence}
             if(post_title == '' or post_msg == ''):
-                error = '繧ｿ繧､繝医Ν縺九Γ繝・そ繝ｼ繧ｸ縺後°繧峨〒縺吶・
+                error = 'タイトルとメッセージを入力してください'
             else:
                 client.board.content.find_one_and_update({"_id":ObjectId(_id)},{'$set': content})
         except:
-            error = '繧ｿ繧､繝医Ν縺九Γ繝・そ繝ｼ繧ｸ繧貞・蜉帙＠縺ｦ縺上□縺輔＞縲・
+            error = '予期せぬエラーが発生しました'
         if(error == None):
             return redirect(url_for('list'))
     else:
@@ -118,7 +118,7 @@ def delete(_id):
             post_id = request.form['_id']
             client.board.content.delete_one({"_id":ObjectId(post_id)})
         except:
-            error = '蜑企勁縺ｫ螟ｱ謨励＠縺ｾ縺励◆縲・
+            error = '予期せぬエラーが発生しました'
         if(error == None):
             return redirect(url_for('list'))
     content = client.board.content.find_one({"_id":ObjectId(_id)})

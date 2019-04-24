@@ -1,20 +1,20 @@
 <!doctype html>
-<title>譁ｰ隕乗軸遉ｺ譚ｿ菴懈・</title>
+<title>新規作成</title>
 {% if username %}
-  <a>繧医≧縺薙◎{{ username }}縺輔ｓ縲・/a>
+  <a>ようこそ{{ username }}さん</a>
 {% endif %}
 {% if error %}
   <a>{{ error }}</a>
 {% endif %}
 
-<h1>譁ｰ隕乗軸遉ｺ譚ｿ菴懈・</h1>
-<a href="/index">繝｡繝九Η繝ｼ縺ｫ謌ｻ繧・/a>
+<h1>新規作成</h1>
+<a href="/index">一覧に戻る</a>
 <div>
     <form method="POST">
-        繧ｿ繧､繝医Ν・・input type="text" name="title" id="title" value="{{ content.title }}"><br>
-        繝｡繝・そ繝ｼ繧ｸ・・br>
+        タイトル<input type="text" name="title" id="title" value="{{ content.title }}"><br>
+        メッセージ<br>
         <textarea name="msg" id="msg" cols="30" rows="10">{{ content.msg }}</textarea><br>
-        <label for='absence'>蜃ｺ谺蟶ｭ縺ゅｊ・・/label><input type="checkbox" name="absence" id="absence" {{ content.absence }}>
-        <input type="submit" value="菴懈・" onclick="return confirm('菴懈・縺励※繧医ｍ縺励＞縺ｧ縺吶°・・)">
+        <label for='absence'>出席確認</label><input type="checkbox" name="absence" id="absence" {{ content.absence }}>
+        <input type="submit" value="確定" onclick="return confirm('確定してよろしいでしょうか？')">
     </form>
 </div>
