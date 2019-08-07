@@ -116,3 +116,6 @@ dmypy.json
 .pyre/
 
 .vscode
+
+# vagrant
+.vagrant/

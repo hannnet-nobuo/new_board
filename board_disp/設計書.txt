@@ -13,6 +13,9 @@ https://qiita.com/ognek/items/a37dd1cd0e26e6adecaa
 
 掲示板、出欠席投稿できる
 
+サーバーにインストール
+MongoDB
+
 
 インストールする
 pip install Flask-Session
@@ -26,3 +29,53 @@ https://github.com/MicrosoftArchive/redis/releases
 windows power shell の場合
 $env:FLASK_APP = "application.py"
 $env:FLASK_RUN_PORT = 5002
+
+
+サービス化
+/etc/systemd/system/board_disp.service:
+
+[Unit]
+Description=board disp daemon
+Requires=board_disp.sock
+After=network.target
+
+[Service]
+PIDFile=/run/board_disp/pid
+User=board
+Group=board
+RuntimeDirectory=gunicorn
+Environment="PATH=/home/board/app/board_disp/index/bin"
+WorkingDirectory=/home/board/app/board_disp/
+ExecStart=/home/board/app/board_disp/disp/bin/gunicorn --pid /run/board_disp/pid application:app --config guniconf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+/etc/systemd/system/board_disp.socket:
+[Unit]
+Description=board disp socket
+
+[Socket]
+ListenStream=/run/board_disp/socket
+
+[Install]
+WantedBy=sockets.target
+
+/etc/tmpfiles.d/board_disp.conf:
+d /run/board_disp 0755 baord board -
+
+
+systemctl enable board_disp.socket
+
+systemctl start board_disp.service
+
+systemctl enable board_disp.service
+
+テスト
+curl --unix-socket /run/board_disp/socket http
+
+設定
+vi /etc/nginx/conf.d/board.conf

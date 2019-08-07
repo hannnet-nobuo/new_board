@@ -24,5 +24,59 @@ https://github.com/MicrosoftArchive/redis/releases
 
 
 Windows power shellの場合以下のコマンド
+.\venv\Scripts\activate
 $env:FLASK_APP = "application.py"
-$env:FLASK_RUN_PORT = 5001
+$env:FLASK_RUN_PORT = 5000
+
+python -m flask run
+
+
+
+サービス化
+/etc/systemd/system/board_edit.service:
+
+[Unit]
+Description=board edit daemon
+Requires=board_edit.sock
+After=network.target
+
+[Service]
+PIDFile=/run/board_edit/pid
+User=board
+Group=board
+RuntimeDirectory=gunicorn
+Environment="PATH=/home/board/app/board_edit/index/bin"
+WorkingDirectory=/home/board/app/board_edit/
+ExecStart=/home/board/app/board_edit/edit/bin/gunicorn --pid /run/board_edit/pid application:app --config guniconf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+/etc/systemd/system/board_edit.socket:
+[Unit]
+Description=board edit socket
+
+[Socket]
+ListenStream=/run/board_edit/socket
+
+[Install]
+WantedBy=sockets.target
+
+/etc/tmpfiles.d/board_edit.conf:
+d /run/board_edit 0755 baord board -
+
+
+systemctl enable board_edit.socket
+
+systemctl start board_edit.service
+
+systemctl enable board_edit.service
+
+テスト
+curl --unix-socket /run/board_edit/socket http
+
+設定
+vi /etc/nginx/conf.d/board.conf

@@ -24,3 +24,56 @@ https://github.com/MicrosoftArchive/redis/releases
 
 $env:FLASK_APP = "application.py"
 $env:FLASK_RUN_PORT = 5000
+
+
+gunicorn application:app  --config guniconf.py
+
+
+サービス化
+/etc/systemd/system/board_index.service:
+
+[Unit]
+Description=board index daemon
+Requires=board_index.sock
+After=network.target
+
+[Service]
+PIDFile=/run/board_index/pid
+User=board
+Group=board
+RuntimeDirectory=gunicorn
+Environment="PATH=/home/board/app/index/index/bin"
+WorkingDirectory=/home/board/app/index/
+ExecStart=/home/board/app/index/index/bin/gunicorn --pid /run/board_index/pid application:app --config guniconf.py
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+/etc/systemd/system/board_index.socket:
+[Unit]
+Description=board index socket
+
+[Socket]
+ListenStream=/run/board_index/socket
+
+[Install]
+WantedBy=sockets.target
+
+/etc/tmpfiles.d/board_index.conf:
+d /run/board_index 0755 baord board -
+
+
+systemctl enable board_index.socket
+
+systemctl start board_index.service
+
+systemctl enable board_index.service
+
+テスト
+curl --unix-socket /run/board_index/socket http
+
+設定
+vi /etc/nginx/conf.d/board.conf
